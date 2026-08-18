@@ -1,0 +1,663 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>UnityDevTools | NoGameNoLife</title><meta name="author" content="小小"><meta name="copyright" content="小小"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Unity-Dev-Tools1存档临时用  编辑器工具库 unity-editor-icon、drawgraph等github地址  反向资源引用查找工具  工具扩展属性，类似于odin的特性  工具扩展属性，类似于odin的特性  xnode:node节点编程工具  粒子效果支持预览  u..."><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "UnityDevTools",
+  "url": "https://xiaoxiaodeguobao.github.io/2025/07/04/UnityDevTools/",
+  "image": "https://xiaoxiaodeguobao.github.io/photo/1.gif",
+  "datePublished": "2025-07-04T07:25:56.000Z",
+  "dateModified": "2026-08-16T03:54:11.971Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "小小",
+      "url": "https://xiaoxiaodeguobao.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.jpg"><link rel="canonical" href="https://xiaoxiaodeguobao.github.io/2025/07/04/UnityDevTools/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 小小","link":"链接: ","source":"来源: NoGameNoLife","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'UnityDevTools',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/modify.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/url(https:/s2.loli.net/2023/02/14/l4ExFQHL5iVw8bv.jpg));"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://s2.loli.net/2021/12/04/5OyD4FQdpYrqU8P.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/photo/1.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">NoGameNoLife</span></a><a class="nav-page-title" href="/"><span class="site-name">UnityDevTools</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">UnityDevTools</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-04T07:25:56.000Z" title="发表于 2025-07-04 15:25:56">2025-07-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-16T03:54:11.971Z" title="更新于 2026-08-16 11:54:11">2026-08-16</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:500,&quot;messagePrev&quot;:&quot;距离上次更新已经有&quot;,&quot;messageNext&quot;:&quot;天了, 技术类相关文章可能需要查看最新版本内容.&quot;,&quot;postUpdate&quot;:&quot;2026-08-16 11:54:11&quot;}" hidden></div><h1 id="Unity-Dev-Tools"><a href="#Unity-Dev-Tools" class="headerlink" title="Unity-Dev-Tools"></a>Unity-Dev-Tools</h1><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">存档临时用</span><br></pre></td></tr></table></figure>
+
+<h2 id="编辑器工具库"><a href="#编辑器工具库" class="headerlink" title="编辑器工具库"></a>编辑器工具库</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/nukadelic">unity-editor-icon、drawgraph等github地址</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityAssetUsageDetector">反向资源引用查找工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/dbrizov/NaughtyAttributes">工具扩展属性，类似于odin的特性</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/dbrizov/NaughtyAttributes">工具扩展属性，类似于odin的特性</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Siccity/xNode">xnode:node节点编程工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/akof1314/UnityParticleSystemPreview">粒子效果支持预览</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/kimsama/Unity-QuickSheet">unity快速读取展示xlsx表单工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/roboryantron/UnityEditorJunkie">编辑器扩展之可搜索的枚举</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/marijnz/unity-toolbar-extender">unity工具菜单扩展，运行暂停那个菜单</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SaladLab/Unity3D.IncrementalCompiler">仅支持windows平台的增量编译工具（不清楚能否提高日常效率）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SixWays/UnityShaderStripper">shader剔除库，加快打包速度</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/andydbc/unity-texture-packer">处理纹理的小工具（可以把多张纹理融合，思路也可以用来处理别的纹理）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/arimger/Unity-Editor-Toolbox">工具的属性，类似与odin，但比odin多一些特性</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/KeyleXiao/UNITY3D-DATA-VIEWER">配置工具，需程序写好类，策划就可以拿来配置，不过没有excel方便</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Meragon/Unity-WinForms">unity调用windows的窗口等</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ProtoTurtle/UnityBitmapDrawing">texture2d绘制扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/ProjectAuditor">项目代码等静态分析工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/crazyshader/GameDev">有一个大型的工具收集库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/redbluegames/unity-mulligan-renamer">一个批量重命名game对象的工具,似乎有点用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/halak/unity-editor-icons">又一份unity-icon集合</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Seneral/Node_Editor_Framework">又一个node -editor</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/smkplus/CustomToolbar">播放、暂停的toolabar扩展，加入了调整时间比例等</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/garettbass/UnityExtensions.ArrayDrawer">数组显示扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/liortal53/MissingReferencesUnity">查找missing引用的工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Thundernerd/Unity3D-ExtendedEditor">工具扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/alelievr/NodeGraphProcessor">节点编辑器,目前发现最好的</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/RoryDungan/HexTiles">6边形格子编辑器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/lujian101/UnityToolDist">高端工具集，uv、lightmap、mat cleaner</a></p>
+</li>
+</ul>
+<h2 id="运行时调试工具"><a href="#运行时调试工具" class="headerlink" title="运行时调试工具"></a>运行时调试工具</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityRuntimeInspector">运行时 unity层级视图及inspector</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/sinai-dev/UnityExplorer">unityexporer:可能类似与runtimeinspector</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/HiddenMonk/Unity3DRuntimeTransformGizmo">运行时transoform</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/HearthSim/UnityHook">unity代码钩子</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://assetstore.unity.com/packages/tools/gui/dynamic-panels-114126">动态日志，检视版，层级视图，tab页签等</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/NeighTools/UnityDoorstop">运行时debug代码工具，具体还不太了解</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/cemuka/UnityRuntimeNodeEditor">运行时node图（行为树可能会用到）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityRuntimePreviewGenerator">运行时预览纹理（评价还可以，还不确定能干啥，好像是可以把game对象拍成纹理展示）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ManlyMarco/RuntimeUnityEditor">运行时工具，和前面的略有不同</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/miguel12345/UnityWireframeRenderer">可以运行时看mesh 线框</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/realgamessoftware/dear-imgui-unity">工具扩展之运行时imgui</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/miguel12345/UnityShapes">绘制特定形状的api</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityRuntimeSceneGizmo">运行时场景gizmoz</a></p>
+</li>
+</ul>
+<h2 id="UI相关"><a href="#UI相关" class="headerlink" title="UI相关"></a>UI相关</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/spr1ngd/UnityCodes">sprintUI组件：饼图、折线图等</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/toly1994328/FlutterUnit">300多种ui扩展，不确定ugui是否适用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/zouchunyi/UnityAvater">装备表现及优化</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Dandarawy/UnityBookPageCurl">翻书效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/XCharts-Team/XCharts">可视化图标插件</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Haruma-K/UnityScreenNavigator">ui切换效果库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/search%3Fp%3D41%26q%3Dunity%26type%3DRepositories">unity内置的网页窗口</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/azixMcAze/Unity-UIGradient">ui渐变支持</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/setchi/FancyScrollView">比较另类的循环滚动列表</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Haruma-K/UnityUIPlayables">为ugui增加的timeline轨道</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/WestHillApps/UniGif">解码并使用gif</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/kirevdokimov/Unity-UI-Rounded-Corners">ui图标圆角化等效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityImageCropper">图片裁剪器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Chman/Moments">可以把gameplay快速转化gif播放，但库比较老了</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/sinbad/UnityInstancedHealthBars">1个drawcall绘制所有血条</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/PavelDoGreat/Super-Blur">一个ui、屏幕高斯模糊库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/pavelkomiagin/unity3d-fortune-wheel">ui转轮实现</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/L-Lawliet/UGUIExtend">ugui扩展，主要是镜像效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/YarnSpinnerTool/YarnSpinner-Unity">runtime dialog工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/eral/UnityUIExtention">ugui的扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/LingJiJian/uLui">ui扩展组件</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/thisotherthing/ui-shapes-kit">ui形状绘制</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Xander93/unity3d-draganddrop">ugui dragand drop</a></p>
+</li>
+</ul>
+<h2 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/QianMo/Awesome-Unity-Shader">丰富的shader效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/WorldOfZero/UnityVisualizations">丰富的shader效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/IronWarrior/UnityGrassGeometryShader">几何着色器绘制的草</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/QianMo/X-PostProcessing-Library">高品质后处理库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/AsehesL/UnityWaveEquation">给力的水效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hecomi/UnityFurURP%23fin">毛发shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/chenjd/UnitySpecialEffectWithDepth">深度图相关的shader效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ColinLeung-NiloCat/UnityURP-MobileScreenSpacePlanarReflection">upr屏幕空间反射</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/EsProgram/InkPainter">不错的涂鸦库</a></p>
+</li>
+<li><p><a href="">用skinmesh做的炫酷特效</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ipud2/Unity-Basic-Shader">技术美术学习课程</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro">大量给力的shader特效作者</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/techizgit/UnityPlayground">大海、湖泊效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/slipster216/VertexPaint">类似涂鸦，但功能更改丰富，还有涂鸦流动等效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/csdjk/LearnUnityShader">有点东西的shader基础实践案例</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SlightlyMad/AtmosphericScattering">大气散射的案例</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hecomi/uRaymarching">光线步进，还不太了解，和光追有点关系</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Scrawk/Ceto">大海系统</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/smkplus/ShaderMan">可以把shadertoy(好像是一个在线的编辑shader工具)转化为hlsl&#x2F;cgshader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/xraxra/IMP">类似于imposter插件，可以批量烘焙（具体等使用时在查看）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ArthurBrussee/Vapor">体积雾</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/KvantSpray">gpu加速的粒子系统</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/SonarFx">声波特效</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/andydbc/unity-frosted-glass">比较老的玻璃效果的实现</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/KvantGrass">会动的草，但时间很老了</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/danielzeller/Lowpoly-Water-Unity">low-poly水效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/MaxwellGengYF/Unity-Volumetric-Light">体积光，实现比较老</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hecomi/UnityVolumeRendering">体积渲染</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/danielshervheim/unity-stylized-water">非写实水效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/chenjd/Realistic-Real-Time-Grass-Rendering-With-Unity">gpu+几何着色器生成海量草</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/UnityRefractionShader">unity折射shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/KvantSwarm">一群线，有点特殊的线渲染</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/sienaiwun/TAA_Unity_URP">taa抗锯齿for urp</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Scrawk/PBD-Fluid-in-Unity">流体库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/xieliujian/UnityDemo_ProjectorShadow">用projector实现阴影，说是兼顾效果与效率，适合与多角色的阴影</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/kitasenjudesign/UnityGpuInstancing">gpu instance+boids+animationbaker</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/knapeczadam/Unity-Shaders">大量shader效果，不过略显粗糙</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/SkyboxPlus">天空盒扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/sonicether/SEGI">动态体积gi系统</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/robcupisz/LightShafts">体积光</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/xieliujian/UnityDemo_PlanarShadow">平面阴影</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/OCASM/SSMS">屏幕空间雾效处理</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Scrawk/Mesh-Voxelization">mesh体素化</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yumayanagisawa/Unity-Raindrops">雨滴效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/NoiseBall">mesh变形shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Aerthas/UNITY-Arc-system-Works-Shader">鬼灭之刃的shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/JiepengTan/FishManShaderTutorial">中阶shader教程</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/NoiseShader">noise shader库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/lettier/3d-game-shaders-for-beginners">适用于初学者的3d shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Kink3d/kShading">卡通渲染shader</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/SpektrLightning">两点间绘制电流（buitin）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/greggman/hsva-unity">hsv shader控制颜色</a></p>
+</li>
+</ul>
+<h2 id="数学、物理、数据结构、算法"><a href="#数学、物理、数据结构、算法" class="headerlink" title="数学、物理、数据结构、算法"></a>数学、物理、数据结构、算法</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/FreyaHolmer/Mathfs">强化的数学库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/dbrizov/NaughtyWaterBuoyancy">水浮力效果模拟</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/jeffvella/UnityNativeCollision">3d sat碰撞库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Phong13/BulletSharpUnity3d">子弹碰撞库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/zezba9000/UnityMathReference">数学数据分析</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/warmtrue/RVO2-Unity">动态避障库rvo</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/LingJiJian/NavmeshExport">navmesh数据导出工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/cr4yz/Unity3d-QuadTree-Collision-Detection">四叉树碰撞过检测项目</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/TheAllenChou/unity-cj-lib">unity的一些常用库，如数学、debug、物理等</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Nition/UnityOctree">八叉树</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/dbrizov/Unity-PathFindingAlgorithms">寻路算法案例</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Shinao/Unity-GPU-Boids">gpu集群</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Blueteak/Unity-Neural-Network">神经网络实现</a></p>
+</li>
+</ul>
+<h2 id="程序化生成"><a href="#程序化生成" class="headerlink" title="程序化生成"></a>程序化生成</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SebLague/Procedural-Landmass-Generation">程序化生成地图</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/MicroGSD/RoadArchitect">道路生成仓库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Syomus/ProceduralToolkit">程序化生成工具集</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/sabresaurus/SabreCSG">关卡设计工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Amaranthos/UnityHexGrid">6边形格子生成器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/DMeville/Unity3d-Dungeon-Generator">地下城生成器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/NoelFB/UnityTile3D">3d笔刷 tile3d</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/marian42/wavefunctioncollapse">无限生成地图</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/LogicalError/realtime-CSG-for-unity">关卡生成及建模工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/jongallant/DungeonGenerator">程序化生成地图工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/staff0rd/polygon-map-unity">多边形地图生成，目前不知道哪里用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/konsfik/Unity3D-Coding-Examples">程序化控制水、地形、音效</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Scrawk/Terrain-Topology-Algorithms">地形图算法</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/tangrams/tangram-unity">地图生成器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/selfsame/unity-wave-function-collapse">2d地图生成器（待定）</a></p>
+</li>
+</ul>
+<h2 id="原生交互"><a href="#原生交互" class="headerlink" title="原生交互"></a>原生交互</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityNativeCamera">原生相机</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityAndroidRuntimePermissions">android原生权限请求</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ryanw3bb/unity-native-toolkit">原生工具集</a></p>
+</li>
+</ul>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/pschraut/UnityHeapExplorer">unity内存分析器</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/AutoLOD">自动生成模型的lod</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Elringus/SpriteDicing">sprite优化，只记录差异化的数据，从而减少大小</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/robertoardila/support-unity-memoryprofiler">memoryprofiler的扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/GameBuildingBlocks/PerfAssist">性能分析的工具，可以学习下实现</a></p>
+</li>
+</ul>
+<h2 id="Unity扩展类"><a href="#Unity扩展类" class="headerlink" title="Unity扩展类"></a>Unity扩展类</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/nubick/unity-utils">一些unity类的小扩展，如rectransform、random等的扩展</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Thundernerd/Unity3D-ExtendedEvent">可以传参的unityevent</a>；</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/TobiasWehrum/unity-utilities">utility库</a></p>
+</li>
+</ul>
+<h2 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/tsubaki/UnityAssetCleaner">清理未使用资源的工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/akof1314/UnityAssetDanshari">资源引用管理套件</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/stillwwater/UnityStyleGuide">资源规范库，管理命名，资源类型查找等，还未验证过</a></p>
+</li>
+</ul>
+<h2 id="整体框架或全面的库"><a href="#整体框架或全面的库" class="headerlink" title="整体框架或全面的库"></a>整体框架或全面的库</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/GaoKaiHaHa/MyUnityFrameWork">看起来还不错的开源框架</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/michidk/Unity-Script-Collection">给力的工具集，包含项目大量好用的代码</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/chromealex/Unity3d.UI.Windows">丰富的扩展功能</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/StefanoCecere/awesome-opensource-unity">总结了大量的库及工具，和之前的内容略有重复，不过看起来很全面</a></p>
+</li>
+</ul>
+<h2 id="有趣的GamePlay效果"><a href="#有趣的GamePlay效果" class="headerlink" title="有趣的GamePlay效果"></a>有趣的GamePlay效果</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SebLague/Portals">穿越的入口：一扇可以看到另已世界的门</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/ElasticSea/unity-fracture">破碎效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keenanwoodall/Deform">强大的变形库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/OskarSigvardsson/unity-delaunay">破坏效果</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hecomi/UnityScreenSpaceBoolean">屏幕空间去除部分图形展示</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/xieliujian/UnityDemo_Avatar">换装案例</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Olezen/UnitySourceMovement">控制移动的小工具，懒的写可以用</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/andersonaddo/EZ-Camera-Shake-Unity">相机震动效果可参考</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/williambl/unity-destruction">普通一点的破碎效果实现</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/prime31/TouchKit">手势工具集</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/noisecrime/Unity-EasingLibraryVisualisation">easing动画库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/SitronX/UnityTimeRewinder">时间回溯支持</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/suncube/Base-Helicopter-Controller">直升机控制</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hugoscurti/mesh-cutter">3d mesh切割实践</a></p>
+</li>
+</ul>
+<h2 id="其他库"><a href="#其他库" class="headerlink" title="其他库"></a>其他库</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/otdavies/UnityChromakey">可以把绿色背景替换为别的背景，说不定回用上</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/zios/unity-themes">可调整unity工具主题</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/luxonis/depthai-unity">可以捕捉人脸等信息</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/DrFlower/Unity-Obfuscator">代码混淆工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/hwaet/UnityProjectCloner">无需复制资源即可clone项目，还未了解如何做到的</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/gwaredd/UnityMarkdownViewer">unity里看markdown工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/unitycoder/UnityLauncherPro">启动unity项目的扩展工具</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/piti6/UnityGpuInstancedAnimation">unity的gpuinstance动画</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/deniszykov/csharp-eval-unity3d">解释执行c#语句</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/prime31/RecyclerKit">对象池系统，可以学习学习，还不太了解做了什么</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/PavelDoGreat/Unity-Android-Live-Wallpaper">把unityapp做成android壁纸</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Lafree317/Unity-InterviewQuestion">面试题总结</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/search%3Fp%3D99%26q%3Dunity%26type%3DRepositories">解释执行C# code(REPL)</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/zulfajuniadi/unity-ecs-navmesh">ecs实现navmesh</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/off99555/Unity3D-Python-Communication">unity and python交互的网络连接库</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/keijiro/KlakNDI">局部传递视频流的组件</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/imadr/Unity-game-hacking">破解unity资源的方案</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/dnSpy/dnSpy">dnSpy:(卧龙推荐)可以用来调试编辑.net和unity程序集(即使没有源码)</a></p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiaoxiaodeguobao.github.io">小小</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiaoxiaodeguobao.github.io/2025/07/04/UnityDevTools/">https://xiaoxiaodeguobao.github.io/2025/07/04/UnityDevTools/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiaoxiaodeguobao.github.io" target="_blank">NoGameNoLife</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/GameDev/">GameDev</a></div><div class="post-share"><div class="social-share" data-image="/photo/1.gif" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/18/%E5%A5%BD%E7%94%A8%E7%9A%84Github%E9%A1%B9%E7%9B%AE/" title="好用的Github项目"><img class="cover" src="https://s2.loli.net/2023/02/14/l4ExFQHL5iVw8bv.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">好用的Github项目</div></div><div class="info-2"><div class="info-item-1">AI分析框架图 GitNexus  graphify  archify  codereview   AI优化token消耗 RTK  简单学习 claude-howto  小工具 电脑端摸鱼文本阅读器 电脑上摸鱼用的txt阅读器  AI学术用 学术技能包  感兴趣项目 AI小镇  英语学习  文本转语音  设计方面用的skill  锻炼用的图文合集   </div></div></div></a><a class="pagination-related" href="/2025/04/10/%5BGame%5D%20GW2%E6%B8%B8%E6%88%8F%E5%B8%AE%E5%8A%A9/" title="GW2游戏帮助"><img class="cover" src="https://s2.loli.net/2023/02/14/l4ExFQHL5iVw8bv.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">GW2游戏帮助</div></div><div class="info-2"><div class="info-item-1">GW2 - Utilidade PublicaGear Lv80 Tanetris: So You Want To Gear a Character How to Gear a Character Easy Ascended and Exotic Gear in Guild Wars 2! Ultimate Gear Guide  Crafts https://gw2crafts.net/  Buylists de como subir cada disciplina de craft do 0 até o 400-500 Versao f2p dos manuais: https://gw2crafts.net/f2p/   Crafting Calculator  Build Crafting GW2: A Crappy Guide to Dealing Damage… Stat Changing  Builds Raids, Dungeons e Open World: Snow Crows Fractals: Discretize Tudo: MetaBattle e H...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="utterances-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Unity-Dev-Tools"><span class="toc-number">1.</span> <span class="toc-text">Unity-Dev-Tools</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E5%B7%A5%E5%85%B7%E5%BA%93"><span class="toc-number">1.1.</span> <span class="toc-text">编辑器工具库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E8%B0%83%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="toc-number">1.2.</span> <span class="toc-text">运行时调试工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI%E7%9B%B8%E5%85%B3"><span class="toc-number">1.3.</span> <span class="toc-text">UI相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93"><span class="toc-number">1.4.</span> <span class="toc-text">渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E3%80%81%E7%89%A9%E7%90%86%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E3%80%81%E7%AE%97%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">数学、物理、数据结构、算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%94%9F%E6%88%90"><span class="toc-number">1.6.</span> <span class="toc-text">程序化生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E4%BA%A4%E4%BA%92"><span class="toc-number">1.7.</span> <span class="toc-text">原生交互</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96"><span class="toc-number">1.8.</span> <span class="toc-text">优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unity%E6%89%A9%E5%B1%95%E7%B1%BB"><span class="toc-number">1.9.</span> <span class="toc-text">Unity扩展类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86"><span class="toc-number">1.10.</span> <span class="toc-text">资源管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6%E6%88%96%E5%85%A8%E9%9D%A2%E7%9A%84%E5%BA%93"><span class="toc-number">1.11.</span> <span class="toc-text">整体框架或全面的库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84GamePlay%E6%95%88%E6%9E%9C"><span class="toc-number">1.12.</span> <span class="toc-text">有趣的GamePlay效果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%BA%93"><span class="toc-number">1.13.</span> <span class="toc-text">其他库</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2020 - 2026 By 小小</span></div><div class="footer_custom_text">空白没有'败北'二字</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+  const getUtterancesTheme = theme => theme === 'dark' ? 'photon-dark' : 'github-light'
+
+  const loadUtterances = (el = document, key) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyUtterances = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const config = {
+      src: 'https://utteranc.es/client.js',
+      repo: 'xiaoxiaodeguobao/xiaoxiaodeguobao.github.io',
+      theme: getUtterancesTheme(document.documentElement.getAttribute('data-theme')),
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      'issue-term': isShuoshuo ? key : (option && option['issue-term']) || 'pathname'
+    }
+
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => ele.setAttribute(key, value))
+    el.querySelector('#utterances-wrap').appendChild(ele)
+  }
+
+  const changeUtterancesTheme = theme => {
+    const iframe = document.querySelector('#utterances-wrap iframe')
+    if (iframe) {
+      const message = {
+        type: 'set-theme',
+        theme: getUtterancesTheme(theme)
+      };
+      iframe.contentWindow.postMessage(message, 'https://utteranc.es')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeUtterancesTheme, 'utterances')
+
+  if (isShuoshuo) {
+    'Utterances' === 'Utterances'
+      ? window.shuoshuoComment = { loadComment: loadUtterances }
+      : window.loadOtherComment = loadUtterances
+    return
+  }
+  
+  if ('Utterances' === 'Utterances' || !true) {
+    if (true) btf.loadComment(document.getElementById('utterances-wrap'), loadUtterances)
+    else loadUtterances()
+  } else {
+    window.loadOtherComment = loadUtterances
+  }
+})()</script></div></div></body></html>
